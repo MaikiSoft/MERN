@@ -1,11 +1,11 @@
 import Nav from './components/menu'
-import Aniadir from './components/agregarTarea';
+import AddTasks from './components/addTasks';
 
 function App(){
   return (
     <>
     <Nav />
-    <Aniadir />
+    <AddTasks />
     </>
   );
 }

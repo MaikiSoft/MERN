@@ -1,12 +1,18 @@
 import '../css/Aniadir.css'
 import React, { useState } from 'react'
 import { Tarea, initialTask, addTarea, resetForm } from '../controller/tasks/task';
+import { EditTasks } from './editTasks';
 
-function Aniadir() {
 
-    const [arrTarea, setArrTarea] = useState<Tarea[]>([])
+function AddTasks() {
+
+    const [arrTarea, setArrTarea] = useState<Tarea[]>([]);
 
     const [formTarea, setFromTarea] = useState<Tarea>(initialTask());
+
+    const [isEditing, setIsEditing] = useState<Boolean>(false);
+
+    const [editIndex, setEditIndex] = useState<Number | null>(null);
 
     const newvalues = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
         const { name, value } = event.target;
@@ -18,8 +24,14 @@ function Aniadir() {
 
     const enviar = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-        setArrTarea((prevTareas) => [...prevTareas, formTarea])
+        setArrTarea((prevTareas) => addTarea(prevTareas, formTarea))
         console.log('datos', arrTarea)
+        setFromTarea(resetForm())
+    }
+
+    const handleEdit = (index:number) =>{
+        setIsEditing(true)
+        setEditIndex(index)
     }
 
 
@@ -31,14 +43,17 @@ function Aniadir() {
                 <div className="card-body">
                     <h5 className="card-title">{tarea.titulo}</h5>
                     <p className="card-text">{tarea.descripcion}</p>
-                    <a href="#" className="btn btn-primary">{tarea.prioridad}</a>
+                    <p className="card-text">{tarea.prioridad}</p>
+                    <button type="button" className="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" onClick={() => handleEdit(index)}>
+                Editar tarea
+            </button>
                 </div>
             </div>
         ))}
             
 
 
-            <button type="button" className="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" onClick={resetForm}>
+            <button type="button" className="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" onClick={() => setFromTarea(initialTask())}>
                 Agregar tarea
             </button>
 
@@ -47,7 +62,7 @@ function Aniadir() {
                 <div className="modal-dialog">
                     <div className="modal-content">
                         <div className="modal-header">
-                            <h1 className="modal-title fs-5" id="exampleModalLabel">Nueva tarea</h1>
+                            <h1 className="modal-title fs-5" id="exampleModalLabel">{isEditing ? 'Nueva tarea': 'Editar tarea'}</h1>
                             <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <form onSubmit={enviar}>
@@ -68,7 +83,7 @@ function Aniadir() {
                             </div>
                             <div className="modal-footer">
                                 <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                <button type="submit" className="btn btn-primary" data-bs-dismiss="modal">Save changes</button>
+                                <button type="submit" className="btn btn-primary" data-bs-dismiss="modal">{isEditing ? 'Actualizar' : 'Guardar'}</button>
                             </div>
                         </form>
                     </div>
@@ -79,4 +94,4 @@ function Aniadir() {
     );
 }
 
-export default Aniadir;
+export default AddTasks;
